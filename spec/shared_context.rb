@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 RSpec.shared_context "shared", :shared_context => :metadata do
-  # This shared context sets up stubs and behaviours that a Rack app
+  # This shared context sets up stubs and mocks that a Rack app
   # would expect to see in the request / response cycle.
   before { allow(app).to receive(:call).with(env).and_return([status, headers, body]) }
 

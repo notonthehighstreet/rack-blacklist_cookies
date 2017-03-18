@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe Rack::RemoveCookies do
+RSpec.describe Rack::BlacklistCookies do
   include_context "shared"
 
   let(:subject) { described_class.new(app) }

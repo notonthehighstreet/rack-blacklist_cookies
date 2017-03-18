@@ -1,5 +1,5 @@
 module Rack
-  class RemoveCookies
+  class BlacklistCookies
     def initialize(app)
       @app = app
       @unwanted_cookie_names ||= ["unwanted_cookie"].freeze

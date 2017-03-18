@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "rack-remove_cookies"
+require "rack-blacklist_cookies"
 require "shared_context"
 
 RSpec.configure do |config|

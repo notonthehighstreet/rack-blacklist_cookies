@@ -1,11 +1,21 @@
 require "spec_helper"
 
 RSpec.describe Rack::BlacklistCookies do
-  include_context "shared"
-
-  let(:subject) { described_class.new(app) }
+  include_context "rack_setup"
+  
+  before do
+    Rack::BlacklistCookies.configure do |config|
+      config.request_blacklist = {
+        "/" => ["unwanted_cookie"],
+      }
+      config.response_blacklist = {
+        "/" => ["unwanted_cookie"],
+      }
+    end
+  end
 
   context "stripping the cookies off the response" do
+    let(:subject) { described_class.new(app) }
     before(:each) { status, headers, body = subject.call(env) }
 
     let(:response_cookies) do

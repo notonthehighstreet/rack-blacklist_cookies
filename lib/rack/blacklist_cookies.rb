@@ -2,22 +2,21 @@ module Rack
   class BlacklistCookies
     def initialize(app)
       @app = app
-      @unwanted_cookie_names ||= ["unwanted_cookie"].freeze
+      @response_blacklist = BlacklistCookies.configuration.response_blacklist
     end
 
     def call(env)
       status, headers, body = @app.call(env)
 
-      headers["Set-Cookie"] = remove_unwanted_cookies(headers["Set-Cookie"]) if homepage?(env)
+      if @response_blacklist[env["PATH_INFO"]]
+        @unwanted_cookie_names = @response_blacklist[env["PATH_INFO"]]
+        headers["Set-Cookie"] = remove_unwanted_cookies(headers["Set-Cookie"])
+      end
 
       [status, headers, body]
     end
 
     private
-
-    def homepage?(env)
-      env["PATH_INFO"] == "/"
-    end
 
     def remove_unwanted_cookies(set_cookie_header)
       new_cookies_header = set_cookie_header.split("\n")

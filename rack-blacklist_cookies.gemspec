@@ -1,5 +1,6 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
@@ -8,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Mazin Power"]
   spec.email         = ["mazinpower@notonthehighstreet.com"]
 
-  spec.summary       = %q{Removes specified cookies from request and / or response on specific pages.}
+  spec.summary       = "Removes specified cookies from request and / or response on specific pages."
   spec.homepage      = "TODO: Put your gem's website or public repo URL here."
   spec.license       = "MIT"
 
@@ -23,4 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "pry-byebug"
+  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "reek"
 end

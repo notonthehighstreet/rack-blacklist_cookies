@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "rack/blacklist_cookies"
 require "rack/blacklist_cookies/configuration"
 

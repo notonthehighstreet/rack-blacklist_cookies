@@ -39,10 +39,10 @@ RSpec.describe Rack::BlacklistCookies do
 
     context "and the path has been defined" do
       let(:request_path) { "/" }
-      let(:request_blacklist) { described_class.configuration.request_blacklist }
+      let(:request_blacklist) { described_class.configuration.request_blacklist[request_path] }
 
       it "removes the unwanted cookie and leaves the others" do
-        expect(subject).to receive(:remove_cookies).with(request_cookies, request_path, request_blacklist).and_call_original
+        expect(subject).to receive(:remove_cookies).with(request_cookies, request_blacklist).and_call_original
         subject.call(env)
       end
     end

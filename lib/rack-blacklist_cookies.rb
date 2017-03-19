@@ -3,9 +3,10 @@ require "rack/blacklist_cookies"
 require "rack/blacklist_cookies/configuration"
 
 module Rack
+  # Rack::BlacklistCookies holds onto configuration values at the class level
   class BlacklistCookies
     class << self
-      attr_accessor :configuration
+      attr_reader :configuration
     end
 
     def self.configuration

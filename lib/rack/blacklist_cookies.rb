@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 module Rack
+  # Rack::BlacklistCookies is the main class that acts as the Rack middleware.
   class BlacklistCookies
     def initialize(app)
       @app = app

@@ -1,3 +1,7 @@
+Attribute:
+  exclude:
+    - "Rack::BlacklistCookies::Configuration"
+
 exclude_paths:
   - bin/
   - spec/

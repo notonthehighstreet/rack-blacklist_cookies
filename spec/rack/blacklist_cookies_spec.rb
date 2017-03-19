@@ -15,6 +15,15 @@ RSpec.describe Rack::BlacklistCookies do
   end
 
   context "stripping the cookies off the request" do
+    before do
+      Rack::BlacklistCookies.configure do |config|
+        config.request_blacklist = {
+          "/" => ["unwanted_cookie"],
+        }
+        config.response_blacklist = {}
+      end
+    end
+
     let(:subject) { described_class.new(app) }
     let(:request_cookies) do
       "unwanted_cookie=DELETEME; domain=.example.com; path=/\n"\
@@ -30,9 +39,10 @@ RSpec.describe Rack::BlacklistCookies do
 
     context "and the path has been defined" do
       let(:request_path) { "/" }
+      let(:request_blacklist) { described_class.configuration.request_blacklist }
 
       it "removes the unwanted cookie and leaves the others" do
-        expect(subject).to receive(:remove_request_cookies).with(request_cookies, request_path)
+        expect(subject).to receive(:remove_cookies).with(request_cookies, request_path, request_blacklist).and_call_original
         subject.call(env)
       end
     end
@@ -41,13 +51,22 @@ RSpec.describe Rack::BlacklistCookies do
       let(:request_path) { "/bananas" }
 
       it "does not remove any cookies" do
-        expect(subject).to_not receive(:remove_request_cookies)
+        expect(subject).to_not receive(:remove_cookies)
         subject.call(env)
       end
     end
   end
 
   context "stripping the cookies off the response" do
+    before do
+      Rack::BlacklistCookies.configure do |config|
+        config.request_blacklist = {}
+        config.response_blacklist = {
+          "/" => ["unwanted_cookie"],
+        }
+      end
+    end
+
     let(:subject) { described_class.new(app) }
     before(:each) { status, headers, body = subject.call(env) }
 
@@ -76,6 +95,60 @@ RSpec.describe Rack::BlacklistCookies do
       let(:request_path) { "/bananas" }
 
       it "does not remove any cookies" do
+        expect(headers["Set-Cookie"]).to eq(response_cookies)
+      end
+    end
+  end
+
+  context "stripping cookies off the response and request" do
+    before do
+      Rack::BlacklistCookies.configure do |config|
+        config.request_blacklist = {
+          "/" => ["unwanted_cookie"],
+        }
+        config.response_blacklist = {
+          "/" => ["unwanted_cookie", "session"],
+        }
+      end
+    end
+
+    let(:subject) { described_class.new(app) }
+
+    let(:request_cookies) do
+      "unwanted_cookie=DELETEME; domain=.example.com; path=/\n"\
+      "preferences=true; path=/\n"\
+      "country=USA; path=/; expires=Sat, 17 Mar 2020 21:00:00 -0000\n"\
+      "session=latest; domain=.open.example.com; path=/; HttpOnly"
+    end
+
+    let(:response_cookies) do
+      "unwanted_cookie=DELETEME; domain=.example.com; path=/\n"\
+      "preferences=true; path=/\n"\
+      "country=USA; path=/; expires=Sat, 17 Mar 2020 21:00:00 -0000\n"\
+      "session=latest; domain=.open.example.com; path=/; HttpOnly"
+    end
+
+    let(:cleaned_response_cookie) do
+      "preferences=true; path=/\n"\
+      "country=USA; path=/; expires=Sat, 17 Mar 2020 21:00:00 -0000"
+    end
+
+    context "and the path has been defined" do
+      let(:request_path) { "/" }
+
+      it "removes the unwanted cookie and leaves the others" do
+        expect(subject).to receive(:remove_cookies).twice.and_call_original
+        status, headers, body = subject.call(env)
+        expect(headers["Set-Cookie"]).to eq(cleaned_response_cookie)
+      end
+    end
+
+    context "and the path has not been defined" do
+      let(:request_path) { "/bananas" }
+
+      it "does not remove any cookies" do
+        expect(subject).to_not receive(:remove_cookies)
+        status, headers, body = subject.call(env)
         expect(headers["Set-Cookie"]).to eq(response_cookies)
       end
     end

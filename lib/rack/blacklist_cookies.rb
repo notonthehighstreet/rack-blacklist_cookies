@@ -10,13 +10,13 @@ module Rack
       current_path = env["PATH_INFO"]
 
       if @request_blacklist[current_path]
-        env["HTTP_COOKIE"] = remove_request_cookies(env["HTTP_COOKIE"], current_path)
+        env["HTTP_COOKIE"] = remove_cookies(env["HTTP_COOKIE"], current_path, @request_blacklist)
       end
 
       status, headers, body = @app.call(env)
 
       if @response_blacklist[current_path]
-        headers["Set-Cookie"] = remove_response_cookies(headers["Set-Cookie"], current_path)
+        headers["Set-Cookie"] = remove_cookies(headers["Set-Cookie"], current_path, @response_blacklist)
       end
 
       [status, headers, body]
@@ -24,17 +24,9 @@ module Rack
 
     private
 
-    def remove_request_cookies(cookie_header, current_path)
+    def remove_cookies(cookie_header, current_path, blacklist)
       new_cookies_header = cookie_header.split("\n")
-      @request_blacklist[current_path].each do |cookie_name|
-        new_cookies_header.reject! { |cookie| "#{cookie_name}=" == cookie[0..cookie_name.length] }
-      end
-      new_cookies_header.join("\n")
-    end
-
-    def remove_response_cookies(cookie_header, current_path)
-      new_cookies_header = cookie_header.split("\n")
-      @response_blacklist[current_path].each do |cookie_name|
+      blacklist[current_path].each do |cookie_name|
         new_cookies_header.reject! { |cookie| "#{cookie_name}=" == cookie[0..cookie_name.length] }
       end
       new_cookies_header.join("\n")

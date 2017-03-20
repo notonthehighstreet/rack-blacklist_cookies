@@ -57,4 +57,13 @@ RSpec.describe "scrubbing cookie headers" do
       end
     end
   end
+
+  context "with no headers" do
+    let(:cookies) { nil }
+    let(:blacklist) { ["unwanted_cookie"] }
+    let(:parser) { Rack::BlacklistCookies::RequestParser.new }
+    it "returns an empty string" do
+      expect(subject.scrub(cookies, blacklist, parser)).to eq("")
+    end
+  end
 end

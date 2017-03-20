@@ -6,7 +6,8 @@ module Rack
     # generated Request cookie strings, and Rack generated Response cookie strings.
     class Scrubber
       def self.scrub(cookies_header, blacklist, parser = Parser.new)
-        return cookies_header unless blacklist && cookies_header
+        return cookies_header unless blacklist
+        return "" unless cookies_header
 
         new_cookies_header = cookies_header.split(parser.splitter)
         blacklist.each do |cookie_name|

@@ -17,11 +17,11 @@ Take the following config as an example:
 ```ruby
 Rack::BlacklistCookies.configure do |config|
   config.request_blacklist = {
-    "/some-url"     => ["cookie_to_blacklist", "another_blacklisted_cookie"]
+    "/some-url"       => ["cookie_to_blacklist", "another_blacklisted_cookie"]
   }
   config.response_blacklist = {
-    "/"             => ["do_not_set_this_cookie_on_homepage_response"]
-    "/another/url"   => ["cookie_to_blacklist", "another_blacklisted_cookie"]
+    "/"               => ["do_not_set_this_cookie_on_homepage_response"]
+    "/another/url"    => ["cookie_to_blacklist", "another_blacklisted_cookie"]
   }
 end
 ```

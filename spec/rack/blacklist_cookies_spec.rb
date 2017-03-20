@@ -47,4 +47,31 @@ RSpec.describe Rack::BlacklistCookies do
       end
     end
   end
+
+  context "when there are no headers" do
+    before do
+      Rack::BlacklistCookies.configure do |config|
+        config.request_blacklist = {
+          "/" => ["unwanted_cookie"],
+        }
+        config.response_blacklist = {
+          "/" => ["unwanted_cookie"],
+        }
+      end
+    end
+    let(:subject) { described_class.new(app) }
+    let(:request_path) { "/" }
+    context "on the request" do
+      let(:request_cookies) { nil }
+      it "does not blow up" do
+        expect{subject.call(env)}.to_not raise_error
+      end
+    end
+    context "on the response" do
+      let(:response_cookies) { nil }
+      it "does not blow up" do
+        expect{subject.call(env)}.to_not raise_error
+      end
+    end
+  end
 end

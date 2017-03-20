@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["mazinpower@notonthehighstreet.com"]
 
   spec.summary       = "Removes specified cookies from request and / or response on specific pages."
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/notonthehighstreet/rack-blacklist_cookies"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|

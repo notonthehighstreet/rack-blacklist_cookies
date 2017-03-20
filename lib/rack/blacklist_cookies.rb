@@ -1,37 +1,29 @@
 # frozen_string_literal: true
 module Rack
-  # Rack::BlacklistCookies is the main class that acts as the Rack middleware.
+  # Rack::BlacklistCookies is a middleware that removes selected cookies from the request and / or response.
   class BlacklistCookies
     def initialize(app)
       @app = app
-      @request_blacklist = BlacklistCookies.configuration.request_blacklist
-      @response_blacklist = BlacklistCookies.configuration.response_blacklist
     end
 
     def call(env)
-      current_path = env["PATH_INFO"]
-
-      if @request_blacklist[current_path]
-        env["HTTP_COOKIE"] = remove_cookies(env["HTTP_COOKIE"], @request_blacklist[current_path])
-      end
+      env["HTTP_COOKIE"] = Scrubber.scrub(env["HTTP_COOKIE"], request_blacklist(env), RequestParser.new)
 
       status, headers, body = @app.call(env)
 
-      if @response_blacklist[current_path]
-        headers["Set-Cookie"] = remove_cookies(headers["Set-Cookie"], @response_blacklist[current_path])
-      end
+      headers["Set-Cookie"] = Scrubber.scrub(headers["Set-Cookie"], response_blacklist(env), ResponseParser.new)
 
       [status, headers, body]
     end
 
     private
 
-    def remove_cookies(cookie_header, blacklist)
-      new_cookies_header = cookie_header.split("\n")
-      blacklist.each do |cookie_name|
-        new_cookies_header.reject! { |cookie| "#{cookie_name}=" == cookie[0..cookie_name.length] }
-      end
-      new_cookies_header.join("\n")
+    def request_blacklist(env)
+      BlacklistCookies.configuration.request_blacklist[env["PATH_INFO"]]
+    end
+
+    def response_blacklist(env)
+      BlacklistCookies.configuration.response_blacklist[env["PATH_INFO"]]
     end
   end
 end

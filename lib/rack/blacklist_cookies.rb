@@ -7,11 +7,15 @@ module Rack
     end
 
     def call(env)
-      env["HTTP_COOKIE"] = Scrubber.scrub(env["HTTP_COOKIE"], request_blacklist(env), RequestParser.new)
-
+      if env["HTTP_COOKIE"]
+        env["HTTP_COOKIE"] = Scrubber.scrub(env["HTTP_COOKIE"], request_blacklist(env), RequestParser.new)
+      end
+      
       status, headers, body = @app.call(env)
 
-      headers["Set-Cookie"] = Scrubber.scrub(headers["Set-Cookie"], response_blacklist(env), ResponseParser.new)
+      if headers["Set-Cookie"]
+        headers["Set-Cookie"] = Scrubber.scrub(headers["Set-Cookie"], response_blacklist(env), ResponseParser.new)
+      end
 
       [status, headers, body]
     end

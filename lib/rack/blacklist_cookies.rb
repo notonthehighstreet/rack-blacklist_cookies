@@ -7,27 +7,13 @@ module Rack
     end
 
     def call(env)
-      if env["HTTP_COOKIE"]
-        env["HTTP_COOKIE"] = Scrubber.scrub(env["HTTP_COOKIE"], request_blacklist(env), RequestParser.new)
-      end
-      
+      env["HTTP_COOKIE"] = RequestScrubber.new(env, env["HTTP_COOKIE"]).scrub if env["HTTP_COOKIE"]
+
       status, headers, body = @app.call(env)
 
-      if headers["Set-Cookie"]
-        headers["Set-Cookie"] = Scrubber.scrub(headers["Set-Cookie"], response_blacklist(env), ResponseParser.new)
-      end
+      headers["Set-Cookie"] = ResponseScrubber.new(env, headers["Set-Cookie"]).scrub if headers["Set-Cookie"]
 
       [status, headers, body]
-    end
-
-    private
-
-    def request_blacklist(env)
-      BlacklistCookies.configuration.request_blacklist[env["PATH_INFO"]]
-    end
-
-    def response_blacklist(env)
-      BlacklistCookies.configuration.response_blacklist[env["PATH_INFO"]]
     end
   end
 end

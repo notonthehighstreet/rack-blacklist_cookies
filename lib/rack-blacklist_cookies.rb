@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 require "rack/blacklist_cookies"
 require "rack/blacklist_cookies/configuration"
-require "rack/blacklist_cookies/parsers"
 require "rack/blacklist_cookies/scrubber"
 
 module Rack

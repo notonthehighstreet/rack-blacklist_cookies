@@ -1,37 +1,49 @@
 require "spec_helper"
 
 RSpec.describe "scrubbing cookie headers" do
-  let(:subject) { Rack::BlacklistCookies::Scrubber }
+  include_context "rack_setup"
+
+  before do
+    Rack::BlacklistCookies.configure do |config|
+      config.request_blacklist = {
+        "/" => ["unwanted_cookie"],
+      }
+      config.response_blacklist = {
+        "/" => ["unwanted_cookie"],
+      }
+    end
+  end
+
+  let(:request_path) { "/" }
 
   context "on the request" do
-    let(:parser) { Rack::BlacklistCookies::RequestParser.new }
+    let(:subject) { Rack::BlacklistCookies::RequestScrubber }
     let(:request_cookies) do
       "unwanted_cookie=DELETEME; "\
       "preferences=true; "\
       "country=USA; "\
       "session=latest"
     end
-    let(:cleaned_request_cookie) do
+    let(:cleaned_request_cookies) do
       "preferences=true; "\
       "country=USA; "\
       "session=latest"
     end
-    let(:request_blacklist) { ["unwanted_cookie"] }
 
     it "scrubs off any unwanted cookies" do
-      expect(subject.scrub(request_cookies, request_blacklist, parser)).to eq(cleaned_request_cookie)
+      expect(subject.new(env, env["HTTP_COOKIE"]).scrub).to eq(cleaned_request_cookies)
     end
 
     context "with no blacklist" do
-      let(:request_blacklist) { nil }
+      let(:request_path) { "/bananas" }
       it "does not scrub any cookies" do
-        expect(subject.scrub(request_cookies, request_blacklist, parser)).to eq(request_cookies)
+        expect(subject.new(env, env["HTTP_COOKIE"]).scrub).to eq(request_cookies)
       end
     end
   end
 
   context "on the response" do
-    let(:parser) { Rack::BlacklistCookies::ResponseParser.new }
+    let(:subject) { Rack::BlacklistCookies::ResponseScrubber }
     let(:response_cookies) do
       "unwanted_cookie=DELETEME; domain=.example.com; path=/\n"\
       "preferences=true; path=/\n"\
@@ -44,26 +56,16 @@ RSpec.describe "scrubbing cookie headers" do
       "country=USA; path=/; expires=Sat, 17 Mar 2020 21:00:00 -0000\n"\
       "session=latest; domain=.open.example.com; path=/; HttpOnly"
     end
-    let(:response_blacklist) { ["unwanted_cookie"] }
 
     it "scrubs off any unwanted cookies" do
-      expect(subject.scrub(response_cookies, response_blacklist, parser)).to eq(cleaned_response_cookie)
+      expect(subject.new(env, headers["Set-Cookie"]).scrub).to eq(cleaned_response_cookie)
     end
 
     context "with no blacklist" do
-      let(:response_blacklist) { nil }
+      let(:request_path) { "/bananas" }
       it "does not scrub any cookies" do
-        expect(subject.scrub(response_cookies, response_blacklist, parser)).to eq(response_cookies)
+        expect(subject.new(env, headers["Set-Cookie"]).scrub).to eq(response_cookies)
       end
-    end
-  end
-
-  context "with no headers" do
-    let(:cookies) { nil }
-    let(:blacklist) { ["unwanted_cookie"] }
-    let(:parser) { Rack::BlacklistCookies::RequestParser.new }
-    it "returns an empty string" do
-      expect(subject.scrub(cookies, blacklist, parser)).to eq("")
     end
   end
 end

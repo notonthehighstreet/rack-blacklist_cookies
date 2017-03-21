@@ -31,13 +31,13 @@ RSpec.describe "scrubbing cookie headers" do
     end
 
     it "scrubs off any unwanted cookies" do
-      expect(subject.new(env, env["HTTP_COOKIE"]).scrub).to eq(cleaned_request_cookies)
+      expect(subject.new(env, env["HTTP_COOKIE"]).to_s).to eq(cleaned_request_cookies)
     end
 
     context "with no blacklist" do
       let(:request_path) { "/bananas" }
       it "does not scrub any cookies" do
-        expect(subject.new(env, env["HTTP_COOKIE"]).scrub).to eq(request_cookies)
+        expect(subject.new(env, env["HTTP_COOKIE"]).to_s).to eq(request_cookies)
       end
     end
   end
@@ -58,13 +58,13 @@ RSpec.describe "scrubbing cookie headers" do
     end
 
     it "scrubs off any unwanted cookies" do
-      expect(subject.new(env, headers["Set-Cookie"]).scrub).to eq(cleaned_response_cookie)
+      expect(subject.new(env, headers["Set-Cookie"]).to_s).to eq(cleaned_response_cookie)
     end
 
     context "with no blacklist" do
       let(:request_path) { "/bananas" }
       it "does not scrub any cookies" do
-        expect(subject.new(env, headers["Set-Cookie"]).scrub).to eq(response_cookies)
+        expect(subject.new(env, headers["Set-Cookie"]).to_s).to eq(response_cookies)
       end
     end
   end

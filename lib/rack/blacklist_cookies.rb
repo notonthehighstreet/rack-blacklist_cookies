@@ -7,11 +7,11 @@ module Rack
     end
 
     def call(env)
-      env["HTTP_COOKIE"] = RequestScrubber.new(env, env["HTTP_COOKIE"]).scrub if env["HTTP_COOKIE"]
+      env["HTTP_COOKIE"] = "#{RequestScrubber.new(env, env["HTTP_COOKIE"])}" if env["HTTP_COOKIE"]
 
       status, headers, body = @app.call(env)
 
-      headers["Set-Cookie"] = ResponseScrubber.new(env, headers["Set-Cookie"]).scrub if headers["Set-Cookie"]
+      headers["Set-Cookie"] = "#{ResponseScrubber.new(env, headers["Set-Cookie"])}" if headers["Set-Cookie"]
 
       [status, headers, body]
     end

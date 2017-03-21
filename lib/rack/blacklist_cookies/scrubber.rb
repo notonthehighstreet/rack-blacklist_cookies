@@ -12,9 +12,14 @@ module Rack
         @cookies_header = cookies_header
       end
 
-      def scrub
+      def to_s
         return @cookies_header unless blacklist
+        scrub
+      end
 
+      private
+
+      def scrub
         new_cookies_header = @cookies_header.split(splitter)
         blacklist.each do |cookie_name|
           new_cookies_header.reject! { |cookie| "#{cookie_name}=" == cookie[0..cookie_name.length] }

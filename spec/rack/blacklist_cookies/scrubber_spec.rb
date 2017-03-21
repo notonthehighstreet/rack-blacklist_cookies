@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe "scrubbing cookie headers" do
+RSpec.describe Rack::BlacklistCookies::RequestScrubber do
   include_context "rack_setup"
 
   before do

@@ -17,5 +17,13 @@ module Rack
     def self.configure
       yield(configuration)
     end
+
+    def self.request_blacklist(env)
+      configuration.request_blacklist[env["PATH_INFO"]]
+    end
+
+    def self.response_blacklist(env)
+      configuration.response_blacklist[env["PATH_INFO"]]
+    end
   end
 end

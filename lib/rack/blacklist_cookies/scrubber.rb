@@ -40,7 +40,7 @@ module Rack
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cookie
     class RequestScrubber < BaseScrubber
       def blacklist
-        BlacklistCookies.configuration.request_blacklist[env["PATH_INFO"]]
+        BlacklistCookies.request_blacklist(env)
       end
 
       def splitter
@@ -57,7 +57,7 @@ module Rack
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
     class ResponseScrubber < BaseScrubber
       def blacklist
-        BlacklistCookies.configuration.response_blacklist[env["PATH_INFO"]]
+        BlacklistCookies.response_blacklist(env)
       end
 
       def splitter

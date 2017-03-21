@@ -3,7 +3,7 @@ require "spec_helper"
 RSpec.describe Rack::BlacklistCookies do
   include_context "rack_setup"
 
-  context "stripping cookies off the response" do
+  context "stripping cookies off the request" do
     before do
       Rack::BlacklistCookies.configure do |config|
         config.request_blacklist = {
@@ -18,14 +18,14 @@ RSpec.describe Rack::BlacklistCookies do
     let(:subject) { described_class.new(app) }
     let(:request_path) { "/" }
 
-    let(:response_cookies) do
+    let(:request_cookies) do
       "unwanted_cookie=DELETEME; "\
       "preferences=true; "\
       "country=USA; "\
       "session=latest"
     end
 
-    let(:cleaned_response_cookie) do
+    let(:cleaned_request_cookie) do
       "preferences=true; "\
       "country=USA; "\
       "session=latest"
@@ -78,7 +78,7 @@ RSpec.describe Rack::BlacklistCookies do
       let(:request_path) { "/bananas" }
 
       it "does not remove any cookies" do
-        expect_any_instance_of(Rack::BlacklistCookies::ResponseScrubber).to receive(:to_s).and_call_original
+        expect_any_instance_of(Rack::BlacklistCookies::ResponseScrubber).to_not receive(:to_s)
         status, headers, body = subject.call(env)
         expect(headers["Set-Cookie"]).to eq(response_cookies)
       end
@@ -148,7 +148,7 @@ RSpec.describe Rack::BlacklistCookies do
       end
 
       it "does not try to change the headers" do
-        expect_any_instance_of(Rack::BlacklistCookies::RequestScrubber).to receive(:to_s).and_call_original
+        expect_any_instance_of(Rack::BlacklistCookies::RequestScrubber).to_not receive(:to_s)
         subject.call(env)
       end
     end
@@ -161,7 +161,7 @@ RSpec.describe Rack::BlacklistCookies do
       end
 
       it "does not try to change the headers" do
-        expect_any_instance_of(Rack::BlacklistCookies::ResponseScrubber).to receive(:to_s).and_call_original
+        expect_any_instance_of(Rack::BlacklistCookies::ResponseScrubber).to_not receive(:to_s)
         subject.call(env)
       end
     end

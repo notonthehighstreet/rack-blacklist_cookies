@@ -19,11 +19,11 @@ module Rack
     private
 
     def scrub_request?(env)
-      env["HTTP_COOKIE"] != nil && !env["HTTP_COOKIE"].empty? && BlacklistCookies.request_blacklist(env)
+      !env["HTTP_COOKIE"].nil? && !env["HTTP_COOKIE"].empty? && BlacklistCookies.request_blacklist(env)
     end
 
     def scrub_response?(env, headers)
-      headers["Set-Cookie"] != nil && !headers["Set-Cookie"].empty? && BlacklistCookies.response_blacklist(env)
+      !headers["Set-Cookie"].nil? && !headers["Set-Cookie"].empty? && BlacklistCookies.response_blacklist(env)
     end
   end
 end

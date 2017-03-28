@@ -76,6 +76,9 @@ Style/StringLiteralsInInterpolation:
     - single_quotes
     - double_quotes
 
+Style/UnneededInterpolation:
+  Enabled: false
+
 Style/HashSyntax:
   EnforcedStyle: no_mixed_keys
   SupportedStyles:

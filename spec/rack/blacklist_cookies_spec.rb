@@ -165,5 +165,32 @@ RSpec.describe Rack::BlacklistCookies do
         subject.call(env)
       end
     end
+
+    context "when there is a bad configuration" do
+      before do
+        Rack::BlacklistCookies.configure do |config|
+          config.request_blacklist = {
+            "/" => ["unwanted_cookie"],
+          }
+          config.response_blacklist = {
+            "/" => ["unwanted_cookie"],
+          }
+        end
+      end
+      let(:subject) { described_class }
+
+      it "raises an error and resets the configuration to be empty" do
+        expect do
+          Rack::BlacklistCookies.configure do |config|
+            config.request_blacklist = :bananas
+            config.response_blacklist = {
+              "/" => ["unwanted_cookie"],
+            }
+          end
+        end.to raise_error(Rack::BlacklistCookies::ConfigurationError)
+        expect(subject.configuration.request_blacklist).to eq({})
+        expect(subject.configuration.response_blacklist).to eq({})
+      end
+    end
   end
 end

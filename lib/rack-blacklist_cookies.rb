@@ -16,6 +16,10 @@ module Rack
 
     def self.configure
       yield(configuration)
+      configuration.validate
+    rescue ConfigurationError => error
+      configuration.reset
+      raise error
     end
 
     def self.request_blacklist(env)

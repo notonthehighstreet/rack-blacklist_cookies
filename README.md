@@ -6,6 +6,8 @@ It does this by examining `Cookies` headers on the request, and `Set-Cookie` hea
 
 This may be useful in situations where you want to continue setting cookies generally but want to apply a finer set of rules to either the request or the response.
 
+_Note:_ Use cases for this gem include preventing caching of content variation and `Set-Cookie` headers on the response. It is not intended to be used for application security.
+
 ## Configuration
 
 All this gem needs to run is a simple configuration file. If you are using this with Rails, then put it in `config/initializers`.
@@ -53,7 +55,7 @@ Or install it yourself as:
 
 ## Development
 
-After checking out the repo, run `bundle install` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bundle install` to install dependencies. Then, run `rake spec` to run the tests.
 
 ## Contributing
 

@@ -6,10 +6,11 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 Gem::Specification.new do |spec|
   spec.name          = "rack-blacklist_cookies"
   spec.version       = "0.1.2"
-  spec.authors       = ["Mazin Power"]
-  spec.email         = ["mazinpower@notonthehighstreet.com"]
+  spec.authors       = ["notonthehighstreet.com", "Mazin Power"]
+  spec.email         = ["tech.contact@notonthehighstreet.com", "mazin.power@icloud.com"]
 
-  spec.summary       = "Removes specified cookies from request and / or response on specific pages."
+  spec.summary       = "Blacklist cookies on the request and response"
+  spec.description   = "Removes specified cookies from request and / or response on user defined pages."
   spec.homepage      = "https://github.com/notonthehighstreet/rack-blacklist_cookies"
   spec.license       = "MIT"
 

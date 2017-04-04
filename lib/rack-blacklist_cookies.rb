@@ -6,10 +6,6 @@ require "rack/blacklist_cookies/scrubber"
 module Rack
   # Rack::BlacklistCookies holds onto configuration values at the class level
   class BlacklistCookies
-    class << self
-      attr_reader :configuration
-    end
-
     def self.configuration
       @configuration ||= Configuration.new
     end

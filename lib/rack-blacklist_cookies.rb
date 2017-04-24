@@ -2,6 +2,7 @@
 require "rack/blacklist_cookies"
 require "rack/blacklist_cookies/configuration"
 require "rack/blacklist_cookies/scrubber"
+require "rack/blacklist_cookies/version"
 
 module Rack
   # Rack::BlacklistCookies holds onto configuration values at the class level
